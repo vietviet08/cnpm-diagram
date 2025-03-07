@@ -1,0 +1,151 @@
+@startuml
+
+package com.cnpm.bottomcv.model {
+
+    class BaseEntity {
+        + Long id
+        + LocalDateTime createdDate
+        + LocalDateTime lastModifiedDate
+    }
+
+    class User implements UserDetails {
+        + Long id
+        + String userCode
+        + String username
+        + String password
+        + Set<Role> roles
+        + Profile profile
+        + Company company
+        + Collection<? extends GrantedAuthority> getAuthorities()
+        + boolean isAccountNonExpired()
+        + boolean isAccountNonLocked()
+        + boolean isCredentialsNonExpired()
+        + boolean isEnabled()
+    }
+
+    class Role {
+        + Long id
+        + RoleType name
+        + Set<User> users
+    }
+
+    class Profile {
+        + Long id
+        + String firstName
+        + String lastName
+        + LocalDateTime dayOfBirth
+        + String address
+        + String phoneNumber
+        + String email
+        + String avatar
+        + String description
+        + User user
+    }
+
+    class Company {
+        + Long id
+        + String name
+        + String slug
+        + String introduce
+        + Map<String, String> socialMediaLinks
+        + Map<String, String> addresses
+        + String phone
+        + String email
+        + String website
+        + String logo
+        + String cover
+        + String industry
+        + String companySize
+        + Integer foundedYear
+        + List<Job> jobs
+        + List<Review> reviews
+    }
+
+    class Job {
+        + Long id
+        + String title
+        + String jobDescription
+        + String jobRequirement
+        + String jobBenefit
+        + JobType jobType
+        + String location
+        + String workTime
+        + Double salary
+        + LocalDateTime expiryDate
+        + StatusJob status
+        + Set<Category> categories
+        + Company company
+    }
+
+    class Category {
+        + Long id
+        + String name
+        + String slug
+        + String description
+        + Set<Job> jobs
+    }
+
+    class CV {
+        + Long id
+        + String title
+        + String cvFile
+        + User user
+        + StatusJob status
+    }
+
+    class Apply {
+        + Long id
+        + User user
+        + Job job
+        + CV cv
+        + StatusJob status
+        + String message
+    }
+
+    class Review {
+        + Long id
+        + String comment
+        + Integer rating
+        + Company company
+        + User user
+    }
+
+    class RefreshToken {
+        + Long id
+        + String token
+        + Instant expiryDate
+        + User user
+    }
+
+    BaseEntity <|-- Apply
+    BaseEntity <|-- CV
+    BaseEntity <|-- Category
+    BaseEntity <|-- Company
+    BaseEntity <|-- Job
+    BaseEntity <|-- Profile
+    BaseEntity <|-- Review
+    BaseEntity <|-- Role
+    BaseEntity <|-- User
+
+    User "1" -- "1" Profile
+    User "1" -- "0..*" Apply
+    User "1" -- "0..*" CV
+    User "0..*" -- "0..*" Role
+    User "0..*" -- "0..*" Review
+    User "0..*" -- "0..*" RefreshToken
+    Job "0..*" -- "0..*" Category
+    Job "0..*" -- "0..1" Apply
+    Company "1" -- "0..*" Job
+    Company "1" -- "0..*" Review
+    Profile "1" -- "1" User
+    Role "0..*" -- "0..*" User
+    CV "0..*" -- "0..1" Apply
+    Apply "0..*" -- "0..1" Job
+    Apply "0..*" -- "0..1" CV
+    Apply "0..*" -- "0..1" User
+    Review "0..*" -- "0..1" Company
+    Review "0..*" -- "0..1" User
+    RefreshToken "1" -- "1" User
+}
+
+@enduml
