@@ -1,0 +1,229 @@
+Enum "jobs_status_enum" {
+  "ACTIVE"
+  "INACTIVE"
+}
+
+Enum "jobs_job_type_enum" {
+  "CONTRACT"
+  "FULL_TIME"
+  "INTERNSHIP"
+  "PART_TIME"
+}
+
+Enum "roles_name_enum" {
+  "ADMIN"
+  "EMPLOYER"
+  "USER"
+}
+
+Table "applies" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "message" varchar(255)
+  "status" tinyint
+  "cv_id" bigint [not null]
+  "job_id" bigint [not null]
+  "user_id" bigint [not null]
+}
+
+Table "categories" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "description" text
+  "name" varchar(255) [not null]
+  "slug" varchar(255) [unique, not null]
+}
+
+Table "companies" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "company_size" varchar(255) [not null]
+  "cover" varchar(255)
+  "email" varchar(255)
+  "founded_year" int
+  "industry" varchar(255) [not null]
+  "introduce" text
+  "logo" varchar(255)
+  "name" varchar(255) [not null]
+  "phone" varchar(255)
+  "slug" varchar(255) [unique, not null]
+  "website" varchar(255)
+}
+
+Table "company_addresses" {
+  "company_id" bigint [not null]
+  "addresses" varchar(255)
+  "addresses_key" varchar(255) [not null]
+
+  Indexes {
+    (company_id, addresses_key) [pk, name: "PRIMARY"]
+  }
+}
+
+Table "company_social_media_links" {
+  "company_id" bigint [not null]
+  "social_media_links" varchar(255)
+  "social_media_links_key" varchar(255) [not null]
+
+  Indexes {
+    (company_id, social_media_links_key) [pk, name: "PRIMARY"]
+  }
+}
+
+Table "cvs" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "cv_file" varchar(255)
+  "status" tinyint
+  "title" varchar(255)
+  "user_id" bigint [not null]
+}
+
+Table "job_category" {
+  "job_id" bigint [not null]
+  "category_id" bigint [not null]
+
+  Indexes {
+    (job_id, category_id) [pk, name: "PRIMARY"]
+  }
+}
+
+Table "jobs" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "message" varchar(255)
+  "status" jobs_status_enum
+  "cv_file" varchar(255)
+  "title" varchar(255)
+  "expiry_date" datetime(6)
+  "job_benefit" varchar(255) [not null]
+  "job_description" varchar(255) [not null]
+  "job_requirement" varchar(255) [not null]
+  "job_type" jobs_job_type_enum [not null]
+  "location" varchar(255) [not null]
+  "salary" double
+  "work_time" varchar(255)
+  "cv_id" bigint [not null]
+  "job_id" bigint [not null]
+  "user_id" bigint [not null]
+  "company_id" bigint [not null]
+}
+
+Table "profiles" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "address" varchar(255)
+  "avatar" varchar(255)
+  "day_of_birth" datetime(6)
+  "description" varchar(255)
+  "email" varchar(255)
+  "first_name" varchar(255)
+  "last_name" varchar(255)
+  "phone_number" varchar(255)
+  "user_id" bigint [unique, not null]
+}
+
+Table "refresh_token" {
+  "id" bigint [pk, not null, increment]
+  "expiry_date" datetime(6) [not null]
+  "token" varchar(255) [unique, not null]
+  "user_id" bigint [unique]
+}
+
+Table "reviews" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "comment" varchar(255) [not null]
+  "rating" int [not null]
+  "company_id" bigint [not null]
+  "user_id" bigint [not null]
+}
+
+Table "roles" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "name" roles_name_enum [unique, not null]
+}
+
+Table "user_roles" {
+  "user_id" bigint [not null]
+  "role_id" bigint [not null]
+
+  Indexes {
+    (user_id, role_id) [pk, name: "PRIMARY"]
+  }
+}
+
+Table "users" {
+  "id" bigint [pk, not null, increment]
+  "created_at" datetime(6)
+  "created_by" varchar(255)
+  "updated_at" datetime(6)
+  "updated_by" varchar(255)
+  "password" varchar(255) [not null]
+  "user_code" varchar(255) [unique, not null]
+  "username" varchar(255) [unique, not null]
+  "company_id" bigint
+}
+
+Ref "FK209pxv30rubi3mennqiiljmon":"cvs"."id" < "applies"."cv_id"
+
+Ref "FK874v0t3kmmd49pl65bg6mxygr":"users"."id" < "applies"."user_id"
+
+Ref "FKb2u5cxacbm121vv4o8hrfhyjw":"jobs"."id" < "applies"."job_id"
+
+Ref "FK710v23c1e02xk6mheanqc6vc0":"companies"."id" < "company_addresses"."company_id"
+
+Ref "FK5dfd6cyfxi6u3qstv452rjde6":"companies"."id" < "company_social_media_links"."company_id"
+
+Ref "FK8dmd6n9rd1bjnsae495lknrwj":"users"."id" < "cvs"."user_id"
+
+Ref "FK2ne4uxtytejbiasreu80k70ah":"categories"."id" < "job_category"."category_id"
+
+Ref "FKkqpj1x5o6qhvnl9tyrpqrcnql":"jobs"."id" < "job_category"."job_id"
+
+Ref "FKruh9r5h6ocpikg2fi3hdlfy9f":"jobs"."id" < "jobs"."job_id"
+
+Ref "FKrtmqcrktb6s7xq8djbs2a2war":"companies"."id" < "jobs"."company_id"
+
+Ref "FKra3g6pshf0p0hv5aisuh3weg8":"users"."id" < "jobs"."user_id"
+
+Ref "FKpdb3e9wu6qordl3k6al16r01u":"jobs"."id" < "jobs"."cv_id"
+
+Ref "FK410q61iev7klncmpqfuo85ivh":"users"."id" < "profiles"."user_id"
+
+Ref "FKjtx87i0jvq2svedphegvdwcuy":"users"."id" < "refresh_token"."user_id"
+
+Ref "FKk2a1dwx049yrpih2icki3p0oe":"companies"."id" < "reviews"."company_id"
+
+Ref "FKcgy7qjc1r99dp117y9en6lxye":"users"."id" < "reviews"."user_id"
+
+Ref "FKhfh9dx7w3ubf1co1vdev94g3f":"users"."id" < "user_roles"."user_id"
+
+Ref "FKh8ciramu9cc9q3qcqiv4ue8a6":"roles"."id" < "user_roles"."role_id"
+
+Ref "FKin8gn4o1hpiwe6qe4ey7ykwq7":"companies"."id" < "users"."company_id"
