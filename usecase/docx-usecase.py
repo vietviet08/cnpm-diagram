@@ -1,11 +1,9 @@
 from docx import Document
 from docx.shared import Pt
 
-# Create a new Document
 doc = Document()
 doc.add_heading('Đặc Tả Use Case', level=1)
 
-# Use case data
 use_cases = [
     {
         "Tiêu đề": "Đăng Ký Người Dùng",
@@ -193,12 +191,10 @@ use_cases = [
     }
 ]
 
-# Add use cases to the document
 for use_case in use_cases:
     doc.add_heading(use_case["Tiêu đề"], level=2)
     table = doc.add_table(rows=0, cols=2)
     
-    # Add rows to the table
     for key, value in use_case.items():
         if key.startswith("Luồng sự kiện chính") or key.startswith("Luồng sự kiện phụ"):
             row = table.add_row().cells
@@ -209,8 +205,6 @@ for use_case in use_cases:
             row[0].text = key
             row[1].text = value
     
-    # Add spacing between use cases
     doc.add_paragraph()
 
-# Save the document
 doc.save("usecase_specifications_vietnamese.docx")
